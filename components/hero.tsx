@@ -8,8 +8,17 @@ export function Hero() {
 
   return (
     <main className="flex-1">
-      <section className="flex items-center justify-center min-h-[calc(100vh-8rem)] px-4">
-        <div className="text-center space-y-6">
+      <section className="relative flex items-center justify-center min-h-[calc(100vh-8rem)] px-4 overflow-hidden">
+        {/* Background video */}
+        <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover z-0">
+          <source src="https://vobile-apps.oss-cn-hangzhou.aliyuncs.com/apollo/homepage2.mp4" type="video/mp4" />
+        </video>
+
+        {/* Dark overlay for better text readability */}
+        <div className="absolute inset-0 bg-black/50 z-10"></div>
+
+        {/* Content with higher z-index */}
+        <div className="relative z-20 text-center space-y-6">
           <h1 className="text-4xl md:text-6xl font-bold text-white text-balance">{t.home.hero.title}</h1>
           <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto text-pretty">{t.home.hero.description}</p>
         </div>
