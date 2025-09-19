@@ -3,6 +3,7 @@
 import { useLanguage } from "@/contexts/language-context"
 import { VOBILE_X_URL, VOBILE_LINKEDIN_URL } from "@/lib/constants"
 import Image from "next/image";
+import Link from "next/link"
 
 export function Footer() {
   const { t } = useLanguage()
@@ -24,9 +25,9 @@ export function Footer() {
 
           {/* Right side links */}
           <div className="flex items-center space-x-6 flex-shrink-0">
-            <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">
+            <Link href="/privacypolicy" className="text-gray-400 hover:text-white transition-colors text-sm">
               {t.footer.privacyPolicy}
-            </a>
+            </Link>
             <a
               href={VOBILE_X_URL}
               target="_blank"
