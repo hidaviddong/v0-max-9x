@@ -2,6 +2,8 @@
 
 import { useLanguage } from "@/contexts/language-context"
 import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 export function Hero() {
   const { t } = useLanguage()
@@ -78,21 +80,36 @@ export function Hero() {
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
             <Card className="bg-gray-900/50 border-gray-800 hover:border-orange-500/50 transition-colors">
-              <CardContent className="p-8 text-center">
+              <CardContent className="p-8 text-center space-y-4">
                 <h3 className="text-xl font-bold text-orange-500 mb-4">{t.home.empoweringValue.creation.title}</h3>
                 <p className="text-gray-300 text-pretty">{t.home.empoweringValue.creation.description}</p>
+                <Button asChild className="bg-orange-500 hover:bg-orange-600 text-white">
+                  <a href="https://dream.vobile.ai/" target="_blank" rel="noopener noreferrer">
+                    Learn More
+                  </a>
+                </Button>
               </CardContent>
             </Card>
+
             <Card className="bg-gray-900/50 border-gray-800 hover:border-orange-500/50 transition-colors">
-              <CardContent className="p-8 text-center">
+              <CardContent className="p-8 text-center space-y-4">
                 <h3 className="text-xl font-bold text-orange-500 mb-4">{t.home.empoweringValue.registration.title}</h3>
                 <p className="text-gray-300 text-pretty">{t.home.empoweringValue.registration.description}</p>
+                <Button asChild className="bg-orange-500 hover:bg-orange-600 text-white">
+                  <Link href="/asset">Learn More</Link>
+                </Button>
               </CardContent>
             </Card>
+
             <Card className="bg-gray-900/50 border-gray-800 hover:border-orange-500/50 transition-colors">
-              <CardContent className="p-8 text-center">
+              <CardContent className="p-8 text-center space-y-4">
                 <h3 className="text-xl font-bold text-orange-500 mb-4">{t.home.empoweringValue.trading.title}</h3>
                 <p className="text-gray-300 text-pretty">{t.home.empoweringValue.trading.description}</p>
+                <Button asChild className="bg-orange-500 hover:bg-orange-600 text-white">
+                  <a href="https://www.crealabs.io/projects" target="_blank" rel="noopener noreferrer">
+                    Learn More
+                  </a>
+                </Button>
               </CardContent>
             </Card>
           </div>
@@ -104,6 +121,15 @@ export function Hero() {
           <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-16 text-balance">
             {t.home.ecosystem.title}
           </h2>
+
+          <div className="flex justify-center mb-16">
+            <div className="w-full max-w-lg aspect-video rounded-lg overflow-hidden bg-gray-900/50 border border-gray-800">
+              <video autoPlay muted loop playsInline className="w-full h-full object-cover">
+                <source src="https://vobile-apps.oss-cn-hangzhou.aliyuncs.com/apollo/homepage3.mp4" type="video/mp4" />
+              </video>
+            </div>
+          </div>
+
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center space-y-4">
               <h3 className="text-xl font-bold text-red-400">{t.home.ecosystem.challenge.title}</h3>
@@ -125,11 +151,14 @@ export function Hero() {
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-16">{t.home.tokenizedIp.title}</h2>
           <div className="grid md:grid-cols-4 gap-6">
-            <Card className="bg-gray-900/50 border-gray-800 hover:border-orange-500/50 transition-colors">
+            <Card
+              className="bg-gray-900/50 border-gray-800 hover:border-orange-500/50 transition-colors cursor-pointer"
+              onClick={() => window.open("https://www.crealabs.io/projects/634874195540443136", "_blank")}
+            >
               <CardContent className="p-6">
                 <div className="aspect-video bg-gray-800 rounded-lg mb-4 flex items-center justify-center">
                   <img
-                    src="/the-charlie-show-poster.jpg"
+                    src="https://vobile-apps.oss-cn-hangzhou.aliyuncs.com/apollo/charlie.jpg"
                     alt="The Charlie Show"
                     className="w-full h-full object-cover rounded-lg"
                   />
