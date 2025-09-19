@@ -27,17 +27,40 @@ export function Hero() {
       <section className="py-20 px-4">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-16">{t.home.dataOverview.title}</h2>
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <Card className="bg-gray-900/50 border-gray-800">
-              <CardContent className="p-8 text-center">
+          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            <Card className="bg-gray-900/50 border-gray-800 overflow-hidden">
+              <CardContent className="p-0 relative aspect-square">
+                <img
+                  src="https://vobile-apps.oss-cn-hangzhou.aliyuncs.com/apollo/maskImage.png"
+                  alt="Mask Image"
+                  className="w-full h-full object-cover"
+                />
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gray-900/50 border-gray-800 overflow-hidden relative">
+              <div
+                className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20"
+                style={{
+                  backgroundImage: "url(https://vobile-apps.oss-cn-hangzhou.aliyuncs.com/apollo/statCardBg1.png)",
+                }}
+              ></div>
+              <CardContent className="p-8 text-center relative z-10">
                 <h3 className="text-lg font-semibold text-gray-300 mb-4">
                   {t.home.dataOverview.assetsUnderManagement}
                 </h3>
                 <div className="text-4xl md:text-5xl font-bold text-orange-500">{t.home.dataOverview.assetsValue}</div>
               </CardContent>
             </Card>
-            <Card className="bg-gray-900/50 border-gray-800">
-              <CardContent className="p-8 text-center">
+
+            <Card className="bg-gray-900/50 border-gray-800 overflow-hidden relative">
+              <div
+                className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20"
+                style={{
+                  backgroundImage: "url(https://vobile-apps.oss-cn-hangzhou.aliyuncs.com/apollo/statCardBg2.png)",
+                }}
+              ></div>
+              <CardContent className="p-8 text-center relative z-10">
                 <h3 className="text-lg font-semibold text-gray-300 mb-4">{t.home.dataOverview.tokenizedAssets}</h3>
                 <div className="text-4xl md:text-5xl font-bold text-orange-500">
                   {t.home.dataOverview.tokenizedValue}
