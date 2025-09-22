@@ -21,7 +21,7 @@ export function Hero() {
 
         {/* Content with higher z-index */}
         <div className="relative z-20 text-center space-y-6">
-          <h1 className="text-4xl md:text-6xl font-bold text-white text-balance">{t.home.hero.title}</h1>
+          <h1 className="font-bold text-white text-balance text-6xl">{t.home.hero.title}</h1>
           <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto text-pretty">{t.home.hero.description}</p>
         </div>
       </section>
