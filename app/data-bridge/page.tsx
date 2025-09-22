@@ -116,7 +116,22 @@ const mockData: Asset[] = [
   },
 ]
 
-export default function DataBridgePage() {
+async function getApiMessage() {
+  try {
+    const response = await fetch("https://maxapi.daviddong.me/", {
+      cache: "no-store", // Ensure fresh data on each request
+    })
+    const data = await response.json()
+    return data.Hello || "No message available"
+  } catch (error) {
+    console.error("Failed to fetch API data:", error)
+    return "Failed to load message"
+  }
+}
+
+export default async function DataBridgePage() {
+  const apiMessage = await getApiMessage()
+
   return (
     <div className="min-h-screen bg-black text-white">
       <Header />
@@ -132,6 +147,10 @@ export default function DataBridgePage() {
           <p className="text-xl text-gray-300 max-w-3xl mx-auto text-pretty">
             Comprehensive view of all your digital assets with real-time data and analytics.
           </p>
+
+          <div className="mt-6 p-4 bg-gray-800 rounded-lg border border-gray-700">
+            <p className="text-orange-400 font-medium">API Status: {apiMessage}</p>
+          </div>
         </div>
 
         <div className="bg-gray-900 p-6 rounded-lg border border-gray-800">
