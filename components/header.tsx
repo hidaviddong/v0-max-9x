@@ -169,7 +169,7 @@ export function Header() {
                     </div>
 
                     {/* Language Switcher */}
-                    <div className="flex justify-start">
+                    <div className="flex flex-col">
                       <LanguageSwitcher />
                     </div>
                   </div>
