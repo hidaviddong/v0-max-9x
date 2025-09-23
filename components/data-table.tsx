@@ -37,6 +37,18 @@ interface TruncatedTextProps {
 }
 
 function TruncatedText({ text, maxLength = 20, className = "", shouldTruncate = true }: TruncatedTextProps) {
+  const [isOpen, setIsOpen] = React.useState(false)
+  const [isMobile, setIsMobile] = React.useState(false)
+
+  React.useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile("ontouchstart" in window || navigator.maxTouchPoints > 0)
+    }
+    checkMobile()
+    window.addEventListener("resize", checkMobile)
+    return () => window.removeEventListener("resize", checkMobile)
+  }, [])
+
   if (!shouldTruncate) {
     return <div className={className}>{text}</div>
   }
@@ -48,11 +60,43 @@ function TruncatedText({ text, maxLength = 20, className = "", shouldTruncate = 
     return <div className={className}>{text}</div>
   }
 
+  const handleTouchStart = () => {
+    if (isMobile) {
+      setIsOpen(true)
+    }
+  }
+
+  const handleTouchEnd = () => {
+    if (isMobile) {
+      setTimeout(() => setIsOpen(false), 2000) // Hide after 2 seconds
+    }
+  }
+
+  const handleMouseEnter = () => {
+    if (!isMobile) {
+      setIsOpen(true)
+    }
+  }
+
+  const handleMouseLeave = () => {
+    if (!isMobile) {
+      setIsOpen(false)
+    }
+  }
+
   return (
     <TooltipProvider>
-      <Tooltip>
+      <Tooltip open={isOpen} onOpenChange={setIsOpen}>
         <TooltipTrigger asChild>
-          <div className={`${className} cursor-help`}>{displayText}</div>
+          <div
+            className={`${className} cursor-help`}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+          >
+            {displayText}
+          </div>
         </TooltipTrigger>
         <TooltipContent side="top" className="max-w-xs break-words">
           {text}
