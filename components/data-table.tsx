@@ -33,13 +33,18 @@ interface TruncatedTextProps {
   text: string
   maxLength?: number
   className?: string
+  shouldTruncate?: boolean
 }
 
-function TruncatedText({ text, maxLength = 20, className = "" }: TruncatedTextProps) {
-  const shouldTruncate = text.length > maxLength
-  const displayText = shouldTruncate ? `${text.slice(0, maxLength)}...` : text
-
+function TruncatedText({ text, maxLength = 20, className = "", shouldTruncate = true }: TruncatedTextProps) {
   if (!shouldTruncate) {
+    return <div className={className}>{text}</div>
+  }
+
+  const needsTruncation = text.length > maxLength
+  const displayText = needsTruncation ? `${text.slice(0, maxLength)}...` : text
+
+  if (!needsTruncation) {
     return <div className={className}>{text}</div>
   }
 
@@ -230,11 +235,65 @@ export function DataTable<TData, TValue>({
     },
   })
 
+  const visibleColumns = table.getVisibleLeafColumns()
+  const visibleColumnIds = visibleColumns.map((col) => col.id)
+  const isOnlyAssetIdVisible = visibleColumnIds.length === 1 && visibleColumnIds.includes("Asset ID")
+  const isOnlyAssetNameVisible = visibleColumnIds.length === 1 && visibleColumnIds.includes("Asset Name")
+
+  const dynamicColumns = React.useMemo(() => {
+    return createColumns(t).map((column) => {
+      if (column.accessorKey === "Asset ID") {
+        return {
+          ...column,
+          cell: ({ row }: any) => (
+            <TruncatedText
+              text={row.getValue("Asset ID")}
+              maxLength={15}
+              className="font-mono text-sm"
+              shouldTruncate={!isOnlyAssetIdVisible}
+            />
+          ),
+        }
+      }
+      if (column.accessorKey === "Asset Name") {
+        return {
+          ...column,
+          cell: ({ row }: any) => (
+            <TruncatedText
+              text={row.getValue("Asset Name")}
+              maxLength={25}
+              className="font-medium"
+              shouldTruncate={!isOnlyAssetNameVisible}
+            />
+          ),
+        }
+      }
+      return column
+    })
+  }, [t, isOnlyAssetIdVisible, isOnlyAssetNameVisible])
+
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value
     setSearchValue(value)
     onSearchChange?.(value)
   }
+
+  const tableInstance = useReactTable({
+    data,
+    columns: dynamicColumns,
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    onColumnVisibilityChange: setColumnVisibility,
+    state: {
+      sorting,
+      columnFilters,
+      columnVisibility,
+    },
+  })
 
   return (
     <div className="w-full">
@@ -257,7 +316,7 @@ export function DataTable<TData, TValue>({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            {table
+            {tableInstance
               .getAllColumns()
               .filter((column) => column.getCanHide())
               .map((column) => {
@@ -279,7 +338,7 @@ export function DataTable<TData, TValue>({
         <div className="min-w-max">
           <Table className="w-full">
             <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
+              {tableInstance.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => {
                     return (
@@ -294,15 +353,15 @@ export function DataTable<TData, TValue>({
             <TableBody>
               {isLoading ? (
                 <TableRow>
-                  <TableCell colSpan={columns.length} className="h-24 text-center">
+                  <TableCell colSpan={dynamicColumns.length} className="h-24 text-center">
                     <div className="flex items-center justify-center">
                       <Loader2 className="h-6 w-6 animate-spin mr-2" />
                       Loading...
                     </div>
                   </TableCell>
                 </TableRow>
-              ) : table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => (
+              ) : tableInstance.getRowModel().rows?.length ? (
+                tableInstance.getRowModel().rows.map((row) => (
                   <TableRow key={row.id} className="hover:bg-muted/50">
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id} className="whitespace-nowrap px-4">
@@ -313,7 +372,7 @@ export function DataTable<TData, TValue>({
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={columns.length} className="h-24 text-center">
+                  <TableCell colSpan={dynamicColumns.length} className="h-24 text-center">
                     {t.dataBridge.table.actions.noResults}
                   </TableCell>
                 </TableRow>
