@@ -175,7 +175,7 @@ export const createColumns = (t: any): ColumnDef<Asset>[] => [
     },
     cell: ({ row }) => {
       const heat = Number.parseFloat(row.getValue("Heat"))
-      return <div className="text-right font-mono">{heat.toFixed(2)}</div>
+      return <div className="font-mono">{heat.toFixed(2)}</div>
     },
   },
   {
@@ -191,7 +191,7 @@ export const createColumns = (t: any): ColumnDef<Asset>[] => [
     cell: ({ row }) => {
       const profitability = Number.parseFloat(row.getValue("Profitability"))
       return (
-        <div className={`text-right font-mono ${profitability > 1 ? "text-green-600" : "text-red-600"}`}>
+        <div className={`font-mono ${profitability > 1 ? "text-green-600" : "text-red-600"}`}>
           {profitability.toFixed(4)}
         </div>
       )
