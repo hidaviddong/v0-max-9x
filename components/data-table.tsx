@@ -13,7 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown } from "lucide-react"
+import { ArrowUpDown, ChevronDown, Loader2 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -24,12 +24,13 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { useLanguage } from "@/contexts/language-context"
 
 export type Asset = {
   "Asset ID": string
   "Asset Name": string
   Link: string
-  Impact: string
+  Impact: string | number
   Heat: number
   Profitability: number
   Portfolio: string
@@ -37,10 +38,10 @@ export type Asset = {
   Type: string
 }
 
-export const columns: ColumnDef<Asset>[] = [
+export const createColumns = (t: any): ColumnDef<Asset>[] => [
   {
     accessorKey: "Asset ID",
-    header: "Asset ID",
+    header: t.dataBridge.table.headers.assetId,
     cell: ({ row }) => <div className="font-mono text-sm">{row.getValue("Asset ID")}</div>,
   },
   {
@@ -48,7 +49,7 @@ export const columns: ColumnDef<Asset>[] = [
     header: ({ column }) => {
       return (
         <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Asset Name
+          {t.dataBridge.table.headers.assetName}
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
@@ -57,7 +58,7 @@ export const columns: ColumnDef<Asset>[] = [
   },
   {
     accessorKey: "Link",
-    header: "Link",
+    header: t.dataBridge.table.headers.link,
     cell: ({ row }) => (
       <a
         href={row.getValue("Link")}
@@ -65,26 +66,37 @@ export const columns: ColumnDef<Asset>[] = [
         rel="noopener noreferrer"
         className="text-orange-500 hover:text-orange-600 underline"
       >
-        View Asset
+        {t.dataBridge.table.actions.viewAsset}
       </a>
     ),
   },
   {
     accessorKey: "Impact",
-    header: "Impact",
+    header: t.dataBridge.table.headers.impact,
     cell: ({ row }) => {
-      const impact = row.getValue("Impact") as string
+      const impact = row.getValue("Impact") as string | number
+      const impactValue = typeof impact === "number" ? impact.toString() : impact
+      const impactText =
+        impactValue === "High" || impact === "high"
+          ? t.dataBridge.table.impact.high
+          : impactValue === "Medium" || impact === "medium"
+            ? t.dataBridge.table.impact.medium
+            : t.dataBridge.table.impact.low
+
+      const impactLevel =
+        typeof impact === "number" ? (impact > 300 ? "High" : impact > 100 ? "Medium" : "Low") : impactValue
+
       return (
         <div
           className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-            impact === "High"
+            impactLevel === "High"
               ? "bg-red-100 text-red-800"
-              : impact === "Medium"
+              : impactLevel === "Medium"
                 ? "bg-yellow-100 text-yellow-800"
                 : "bg-green-100 text-green-800"
           }`}
         >
-          {impact}
+          {typeof impact === "number" ? impact : impactText}
         </div>
       )
     },
@@ -94,7 +106,7 @@ export const columns: ColumnDef<Asset>[] = [
     header: ({ column }) => {
       return (
         <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Heat
+          {t.dataBridge.table.headers.heat}
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
@@ -109,7 +121,7 @@ export const columns: ColumnDef<Asset>[] = [
     header: ({ column }) => {
       return (
         <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Profitability
+          {t.dataBridge.table.headers.profitability}
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
@@ -125,7 +137,7 @@ export const columns: ColumnDef<Asset>[] = [
   },
   {
     accessorKey: "Portfolio",
-    header: "Portfolio",
+    header: t.dataBridge.table.headers.portfolio,
     cell: ({ row }) => <div className="capitalize">{row.getValue("Portfolio")}</div>,
   },
   {
@@ -133,7 +145,7 @@ export const columns: ColumnDef<Asset>[] = [
     header: ({ column }) => {
       return (
         <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Listing Date
+          {t.dataBridge.table.headers.listingDate}
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
@@ -145,7 +157,7 @@ export const columns: ColumnDef<Asset>[] = [
   },
   {
     accessorKey: "Type",
-    header: "Type",
+    header: t.dataBridge.table.headers.type,
     cell: ({ row }) => <div className="capitalize">{row.getValue("Type")}</div>,
   },
 ]
@@ -153,12 +165,22 @@ export const columns: ColumnDef<Asset>[] = [
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+  onSearchChange?: (query: string) => void
+  isLoading?: boolean
 }
 
-export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({
+  columns,
+  data,
+  onSearchChange,
+  isLoading = false,
+}: DataTableProps<TData, TValue>) {
+  const { t } = useLanguage()
+
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
+  const [searchValue, setSearchValue] = React.useState("")
 
   const table = useReactTable({
     data,
@@ -177,19 +199,30 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
     },
   })
 
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value
+    setSearchValue(value)
+    onSearchChange?.(value)
+  }
+
   return (
     <div className="w-full">
       <div className="flex items-center py-4">
-        <Input
-          placeholder="Filter assets..."
-          value={(table.getColumn("Asset Name")?.getFilterValue() as string) ?? ""}
-          onChange={(event) => table.getColumn("Asset Name")?.setFilterValue(event.target.value)}
-          className="max-w-sm"
-        />
+        <div className="relative max-w-sm">
+          <Input
+            placeholder={t.dataBridge.table.actions.filterAssets}
+            value={searchValue}
+            onChange={handleSearchChange}
+            className="pr-10"
+          />
+          {isLoading && (
+            <Loader2 className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 animate-spin text-gray-400" />
+          )}
+        </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto bg-transparent">
-              Columns <ChevronDown className="ml-2 h-4 w-4" />
+              {t.dataBridge.table.actions.columns} <ChevronDown className="ml-2 h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
@@ -227,7 +260,16 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {isLoading ? (
+              <TableRow>
+                <TableCell colSpan={columns.length} className="h-24 text-center">
+                  <div className="flex items-center justify-center">
+                    <Loader2 className="h-6 w-6 animate-spin mr-2" />
+                    Loading...
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id} className="hover:bg-muted/50">
                   {row.getVisibleCells().map((cell) => (
@@ -238,27 +280,12 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-24 text-center">
-                  No results.
+                  {t.dataBridge.table.actions.noResults}
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
-      </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="space-x-2">
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button variant="secondary" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
-            Next
-          </Button>
-        </div>
       </div>
     </div>
   )

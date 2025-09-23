@@ -30,7 +30,7 @@ export function Header() {
             {/* Logo */}
             <Link href="/">
               <Image
-                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/design-mode-images/siteLogo%281%29-S3jEfhyZoAHncrtARHzwj8gvUw3Bz7.svg"
+                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/design-mode-images/siteLogo%281%29-Hp8h1z3WMQzx7chI9rXnw92lKNkVWu.svg"
                 alt="Vobile Logo"
                 width={100}
                 height={100}
