@@ -3,6 +3,7 @@
 import * as React from "react";
 import { useLanguage } from "@/contexts/language-context";
 import { DataTable, createColumns, type Asset } from "@/components/data-table";
+import { useAuth } from "@clerk/nextjs";
 
 interface AssetClientPageProps {
   initialData: Asset[];
@@ -24,8 +25,8 @@ function transformApiData(apiData: any[]): Asset[] {
 }
 
 function AssetClientPage({ initialData, apiMessage }: AssetClientPageProps) {
+ const { getToken } = useAuth();
   const { t } = useLanguage();
-
   const [data, setData] = React.useState<Asset[]>(initialData);
   const [isLoading, setIsLoading] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState("");
@@ -35,7 +36,13 @@ function AssetClientPage({ initialData, apiMessage }: AssetClientPageProps) {
       // If search is cleared, fetch all assets
       setIsLoading(true);
       try {
-        const response = await fetch("https://maxapi.daviddong.me/all_assets");
+        const token = await getToken();
+        const response = await fetch("https://maxapi.daviddong.me/all_assets", {
+          headers: {
+             Authorization: `Bearer ${token}`,
+        },
+        });
+
         if (response.ok) {
           const apiData = await response.json();
           setData(transformApiData(apiData));
