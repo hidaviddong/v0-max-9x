@@ -15,7 +15,7 @@ export function Footer() {
           {/* Logo and description */}
           <div className="flex items-start space-x-4 max-w-4xl">
               <Image
-          src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/design-mode-images/siteLogo%281%29%281%29-ze43zNo6KcKYUsbhTFQeCQlwYWdGVO.svg"
+          src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/design-mode-images/siteLogo%281%29%281%29-TaR6fQwYOihYJKntNxyGvvB45YbdDy.svg"
           alt="Vobile Logo"
           width={100}
           height={100}

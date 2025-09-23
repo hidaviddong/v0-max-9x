@@ -91,7 +91,6 @@ function TruncatedText({ text, maxLength = 20, className = "", shouldTruncate = 
           <div
             className={`${className} cursor-help`}
             onTouchStart={handleTouchStart}
-            onTouchEnd={handleTouchEnd}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
           >

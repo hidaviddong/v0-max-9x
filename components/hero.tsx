@@ -40,7 +40,7 @@ export function Hero() {
             <Card className="bg-gray-900/50 border-gray-800 overflow-hidden">
               <CardContent className="p-0 relative aspect-square">
                 <img
-                  src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/design-mode-images/maskImage%281%29%281%29-KRLiEmqeyuqDAa3onk2TSRn3lM6R9R.png"
+                  src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/design-mode-images/maskImage%281%29%281%29-drKReqIkjriaaPMe25JmGia1ZSPTjv.png"
                   alt="Mask Image"
                   className="w-full h-full object-cover"
                 />
@@ -165,7 +165,7 @@ export function Hero() {
               <CardContent className="p-6">
                 <div className="aspect-video bg-gray-800 rounded-lg mb-4 flex items-center justify-center">
                   <img
-                    src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/design-mode-images/charlie%281%29%281%29-BR9ElhTA0CunLFHpoTmRIEf6UQjqVa.jpg"
+                    src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/design-mode-images/charlie%281%29%281%29-IGA4WFogyhVcOFGv8KNd21YfALgMgK.jpg"
                     alt="The Charlie Show"
                     className="w-full h-full object-cover rounded-lg"
                   />
