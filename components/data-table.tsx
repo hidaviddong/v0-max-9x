@@ -279,8 +279,25 @@ export function DataTable<TData, TValue>({
         style={{
           scrollbarWidth: "thin",
           scrollbarColor: "#cbd5e1 #f1f5f9",
+          WebkitScrollbarWidth: "thin",
         }}
       >
+        <style jsx>{`
+          div::-webkit-scrollbar {
+            height: 8px;
+          }
+          div::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+          }
+          div::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+          }
+          div::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+          }
+        `}</style>
         <div className="min-w-max">
           <Table className="w-full" style={{ minWidth: "1200px" }}>
             <TableHeader>
