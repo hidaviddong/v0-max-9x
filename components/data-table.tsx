@@ -236,9 +236,6 @@ export function DataTable<TData, TValue>({
     onSearchChange?.(value)
   }
 
-  const visibleColumns = table.getVisibleLeafColumns()
-  const shouldShowScrollbar = visibleColumns.length > 3 // Show scrollbar only when more than 3 columns
-
   return (
     <div className="w-full">
       <div className="flex items-center py-4">
@@ -278,58 +275,8 @@ export function DataTable<TData, TValue>({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      {shouldShowScrollbar ? (
-        <ScrollArea className="rounded-md border">
-          <div className="min-w-max">
-            <Table className="w-full">
-              <TableHeader>
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => {
-                      return (
-                        <TableHead key={header.id} className="text-white whitespace-nowrap px-4">
-                          {header.isPlaceholder
-                            ? null
-                            : flexRender(header.column.columnDef.header, header.getContext())}
-                        </TableHead>
-                      )
-                    })}
-                  </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody>
-                {isLoading ? (
-                  <TableRow>
-                    <TableCell colSpan={columns.length} className="h-24 text-center">
-                      <div className="flex items-center justify-center">
-                        <Loader2 className="h-6 w-6 animate-spin mr-2" />
-                        Loading...
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ) : table.getRowModel().rows?.length ? (
-                  table.getRowModel().rows.map((row) => (
-                    <TableRow key={row.id} className="hover:bg-muted/50">
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id} className="whitespace-nowrap px-4">
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={columns.length} className="h-24 text-center">
-                      {t.dataBridge.table.actions.noResults}
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </div>
-        </ScrollArea>
-      ) : (
-        <div className="rounded-md border">
+      <ScrollArea className="rounded-md border">
+        <div className="min-w-max">
           <Table className="w-full">
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
@@ -374,7 +321,7 @@ export function DataTable<TData, TValue>({
             </TableBody>
           </Table>
         </div>
-      )}
+      </ScrollArea>
     </div>
   )
 }
