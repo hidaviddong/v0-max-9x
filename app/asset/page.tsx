@@ -2,6 +2,7 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import ClientPage from "./client-page";
 import type { Asset } from "@/components/data-table";
+import { auth } from "@clerk/nextjs/server";
 
 function transformApiData(apiData: any[]): Asset[] {
   return apiData.map((item) => ({
@@ -18,9 +19,14 @@ function transformApiData(apiData: any[]): Asset[] {
 }
 
 async function getAllAssets(): Promise<Asset[]> {
+  const { getToken } = auth(); 
+  const token = await getToken(); 
   try {
     const response = await fetch("https://maxapi.daviddong.me/all_assets", {
       cache: "no-store",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     if (!response.ok) {
