@@ -65,13 +65,7 @@ function TruncatedText({ text, maxLength = 20, className = "", shouldTruncate = 
       setIsOpen(true)
     }
   }
-
-  const handleTouchEnd = () => {
-    if (isMobile) {
-      setTimeout(() => setIsOpen(false), 2000) // Hide after 2 seconds
-    }
-  }
-
+  
   const handleMouseEnter = () => {
     if (!isMobile) {
       setIsOpen(true)
