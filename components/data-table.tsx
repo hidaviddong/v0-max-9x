@@ -15,6 +15,7 @@ import {
 } from "@tanstack/react-table"
 import { ArrowUpDown, ChevronDown, Loader2 } from "lucide-react"
 import { TooltipProvider } from "@radix-ui/react-tooltip"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -37,7 +38,7 @@ interface TruncatedTextProps {
 }
 
 function TruncatedText({ text, maxLength = 20, className = "", shouldTruncate = true }: TruncatedTextProps) {
-  const [isOpen, setIsOpen] = React.useState(false)
+  const [isPopoverOpen, setIsPopoverOpen] = React.useState(false)
   const [isMobile, setIsMobile] = React.useState(false)
 
   React.useEffect(() => {
@@ -60,36 +61,24 @@ function TruncatedText({ text, maxLength = 20, className = "", shouldTruncate = 
     return <div className={className}>{text}</div>
   }
 
-  const handleTouchStart = () => {
-    if (isMobile) {
-      setIsOpen(true)
-    }
-  }
-  
-  const handleMouseEnter = () => {
-    if (!isMobile) {
-      setIsOpen(true)
-    }
-  }
-
-  const handleMouseLeave = () => {
-    if (!isMobile) {
-      setIsOpen(false)
-    }
+  if (isMobile) {
+    return (
+      <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
+        <PopoverTrigger asChild>
+          <div className={`${className} cursor-pointer`}>{displayText}</div>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto max-w-xs p-2 text-sm break-words" side="top">
+          {text}
+        </PopoverContent>
+      </Popover>
+    )
   }
 
   return (
     <TooltipProvider>
-      <Tooltip open={isOpen} onOpenChange={setIsOpen}>
+      <Tooltip>
         <TooltipTrigger asChild>
-          <div
-            className={`${className} cursor-help`}
-            onTouchStart={handleTouchStart}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-          >
-            {displayText}
-          </div>
+          <div className={`${className} cursor-help`}>{displayText}</div>
         </TooltipTrigger>
         <TooltipContent side="top" className="max-w-xs break-words">
           {text}
