@@ -14,6 +14,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table"
 import { ArrowUpDown, ChevronDown, Loader2 } from "lucide-react"
+import { TooltipProvider } from "@radix-ui/react-tooltip"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -24,7 +25,36 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { useLanguage } from "@/contexts/language-context"
+
+interface TruncatedTextProps {
+  text: string
+  maxLength?: number
+  className?: string
+}
+
+function TruncatedText({ text, maxLength = 20, className = "" }: TruncatedTextProps) {
+  const shouldTruncate = text.length > maxLength
+  const displayText = shouldTruncate ? `${text.slice(0, maxLength)}...` : text
+
+  if (!shouldTruncate) {
+    return <div className={className}>{text}</div>
+  }
+
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div className={`${className} cursor-help`}>{displayText}</div>
+        </TooltipTrigger>
+        <TooltipContent side="top" className="max-w-xs break-words">
+          {text}
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  )
+}
 
 export type Asset = {
   "Asset ID": string
@@ -42,7 +72,7 @@ export const createColumns = (t: any): ColumnDef<Asset>[] => [
   {
     accessorKey: "Asset ID",
     header: t.dataBridge.table.headers.assetId,
-    cell: ({ row }) => <div className="font-mono text-sm">{row.getValue("Asset ID")}</div>,
+    cell: ({ row }) => <TruncatedText text={row.getValue("Asset ID")} maxLength={15} className="font-mono text-sm" />,
   },
   {
     accessorKey: "Asset Name",
@@ -54,7 +84,7 @@ export const createColumns = (t: any): ColumnDef<Asset>[] => [
         </Button>
       )
     },
-    cell: ({ row }) => <div className="font-medium">{row.getValue("Asset Name")}</div>,
+    cell: ({ row }) => <TruncatedText text={row.getValue("Asset Name")} maxLength={25} className="font-medium" />,
   },
   {
     accessorKey: "Link",
@@ -244,48 +274,58 @@ export function DataTable<TData, TValue>({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id} className="text-white">
-                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                    </TableHead>
-                  )
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {isLoading ? (
-              <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
-                  <div className="flex items-center justify-center">
-                    <Loader2 className="h-6 w-6 animate-spin mr-2" />
-                    Loading...
-                  </div>
-                </TableCell>
-              </TableRow>
-            ) : table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} className="hover:bg-muted/50">
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
-                  ))}
+      <div
+        className="rounded-md border overflow-x-auto overflow-y-hidden"
+        style={{
+          scrollbarWidth: "thin",
+          scrollbarColor: "#cbd5e1 #f1f5f9",
+        }}
+      >
+        <div className="min-w-max">
+          <Table className="w-full" style={{ minWidth: "1200px" }}>
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <TableHead key={header.id} className="text-white whitespace-nowrap px-4">
+                        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                      </TableHead>
+                    )
+                  })}
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
-                  {t.dataBridge.table.actions.noResults}
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {isLoading ? (
+                <TableRow>
+                  <TableCell colSpan={columns.length} className="h-24 text-center">
+                    <div className="flex items-center justify-center">
+                      <Loader2 className="h-6 w-6 animate-spin mr-2" />
+                      Loading...
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ) : table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow key={row.id} className="hover:bg-muted/50">
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id} className="whitespace-nowrap px-4">
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={columns.length} className="h-24 text-center">
+                    {t.dataBridge.table.actions.noResults}
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </div>
     </div>
   )

@@ -12,7 +12,14 @@ export function Hero() {
     <main className="flex-1">
       <section className="relative flex items-center justify-center min-h-[calc(100vh-8rem)] px-4 overflow-hidden">
         {/* Background video */}
-        <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover z-0">
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          poster="/homepage2.jpg"
+          className="absolute inset-0 w-full h-full object-cover z-0"
+        >
           <source src="https://vobile-apps.oss-cn-hangzhou.aliyuncs.com/apollo/homepage2.mp4" type="video/mp4" />
         </video>
 
@@ -33,7 +40,7 @@ export function Hero() {
             <Card className="bg-gray-900/50 border-gray-800 overflow-hidden">
               <CardContent className="p-0 relative aspect-square">
                 <img
-                  src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/design-mode-images/maskImage%281%29-3yk1HV0etn6Ckp7AK5TqGUsiLeDo7S.png"
+                  src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/design-mode-images/maskImage%281%29%281%29-KRLiEmqeyuqDAa3onk2TSRn3lM6R9R.png"
                   alt="Mask Image"
                   className="w-full h-full object-cover"
                 />
@@ -158,7 +165,7 @@ export function Hero() {
               <CardContent className="p-6">
                 <div className="aspect-video bg-gray-800 rounded-lg mb-4 flex items-center justify-center">
                   <img
-                    src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/design-mode-images/charlie%281%29-wr80z7Yv6E8HDMm1NE2YkLDZzT9zZv.jpg"
+                    src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/design-mode-images/charlie%281%29%281%29-BR9ElhTA0CunLFHpoTmRIEf6UQjqVa.jpg"
                     alt="The Charlie Show"
                     className="w-full h-full object-cover rounded-lg"
                   />
