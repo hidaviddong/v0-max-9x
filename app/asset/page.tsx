@@ -1,11 +1,12 @@
 "use client";
+
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { type Asset, createColumns, DataTable } from "@/components/data-table";
 import { useLanguage } from "@/contexts/language-context";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useDebouncedValue } from "foxact/use-debounced-value";
+import { useDebouncedState } from "@react-hookz/web";
 import { useSession } from "@clerk/nextjs";
 import { toast } from "sonner";
 
@@ -26,17 +27,16 @@ function transformApiData(apiData: any): Asset[] {
 export default function AssetPage() {
   const { t } = useLanguage();
 
-  const [search, setSearch] = useState("");
-  const debouncedSearch = useDebouncedValue(search, 300, false);
+  const [search, setSearch] = useDebouncedState("", 300);
   const { session } = useSession();
 
   const { data, isLoading } = useQuery({
-    queryKey: ["assets", debouncedSearch || "all", session?.id],
+    queryKey: ["assets", search || "all", session?.id],
     queryFn: async () => {
-      const url = debouncedSearch
+      const url = search
         ? `${
             process.env.NEXT_PUBLIC_FASTAPI_URL
-          }/search_assets?q=${encodeURIComponent(String(debouncedSearch))}`
+          }/search_assets?q=${encodeURIComponent(search)}`
         : `${process.env.NEXT_PUBLIC_FASTAPI_URL}/all_assets`;
       const token = await session?.getToken();
       const response = await fetch(url, {
