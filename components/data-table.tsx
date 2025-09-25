@@ -20,7 +20,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useQueryState } from "nuqs";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -45,6 +44,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/language-context";
 import { useUser } from "@clerk/nextjs";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 interface TruncatedTextProps {
   text: string;
@@ -365,9 +365,20 @@ export function DataTable<TData, TValue>({
     });
   }, [t, isOnlyAssetIdVisible, isOnlyAssetNameVisible]);
 
-  const [searchValue, setSearchValue] = useQueryState("search", {
-    defaultValue: "",
-  });
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const searchValue = searchParams.get("search") ?? "";
+  const setSearchValue = (value: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (value) {
+      params.set("search", value);
+    } else {
+      params.delete("search");
+    }
+    const query = params.toString();
+    router.replace(query ? `${pathname}?${query}` : pathname);
+  };
 
   const tableInstance = useReactTable({
     data,

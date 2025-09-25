@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { type Asset } from "@/components/data-table";
-import { parseAsString, useQueryState } from "nuqs";
 import { useDebouncedValue } from "foxact/use-debounced-value";
 import { useSession } from "@clerk/nextjs";
+import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
 export const KEYS = {
@@ -30,7 +30,8 @@ function transformApiData(apiData: any): Asset[] {
 }
 
 export function useAssets() {
-  const [searchQuery] = useQueryState("search", parseAsString);
+  const searchParams = useSearchParams();
+  const searchQuery = searchParams.get("search") || "";
   const searchDebouncedValue = useDebouncedValue(searchQuery, 300, false);
   const { session } = useSession();
   const assetsQuery = useQuery({
