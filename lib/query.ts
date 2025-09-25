@@ -3,12 +3,17 @@ import { type Asset } from "@/components/data-table";
 import { parseAsString, useQueryState } from "nuqs";
 import { useDebouncedValue } from "foxact/use-debounced-value";
 import { useSession } from "@clerk/nextjs";
+import { toast } from "sonner";
 
 export const KEYS = {
   ASSETS: "assets",
 };
 
-const BASE_URL = "https://maxapi.daviddong.me";
+const BASE_URL_PROD = "https://maxapi.daviddong.me";
+const BASE_URL_DEV = "http://localhost:8000";
+
+const isDev = process.env.NODE_ENV === "development";
+const BASE_URL = isDev ? BASE_URL_DEV : BASE_URL_PROD;
 
 function transformApiData(apiData: any): Asset[] {
   return apiData.map((item: any) => ({
@@ -42,6 +47,9 @@ export function useAssets() {
         },
       });
       const data = await response.json();
+      if (!response.ok) {
+        toast.error(data.detail);
+      }
       return data;
     },
     select(data) {

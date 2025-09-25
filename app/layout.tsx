@@ -8,6 +8,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import QueryProvider from "@/components/query-provider";
 import "./globals.css";
+import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "Vobile MAX - Making Creative More Valuable",
@@ -28,7 +29,10 @@ export default function RootLayout({
         >
           <QueryProvider>
             <NuqsAdapter>
-              <LanguageProvider>{children}</LanguageProvider>
+              <LanguageProvider>
+                {children}
+                <Toaster richColors />
+              </LanguageProvider>
             </NuqsAdapter>
           </QueryProvider>
           <Analytics />
