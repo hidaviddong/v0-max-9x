@@ -4,10 +4,12 @@ import { Footer } from "@/components/footer";
 import { createColumns, DataTable } from "@/components/data-table";
 import { useLanguage } from "@/contexts/language-context";
 import { useAssets } from "@/lib/query";
+import { useState } from "react";
 
 export default function AssetPage() {
   const { t } = useLanguage();
-  const assetsQuery = useAssets();
+  const [search, setSearch] = useState("");
+  const assetsQuery = useAssets(search);
   const isLoading = assetsQuery.isLoading;
   const data = assetsQuery.data || [];
   const columns = createColumns(t);
@@ -25,7 +27,13 @@ export default function AssetPage() {
         </div>
 
         <div className="bg-gray-900 p-6 rounded-lg border border-gray-800">
-          <DataTable isLoading={isLoading} columns={columns} data={data} />
+          <DataTable
+            isLoading={isLoading}
+            columns={columns}
+            data={data}
+            searchValue={search}
+            onSearchChange={setSearch}
+          />
         </div>
       </main>
       <Footer />

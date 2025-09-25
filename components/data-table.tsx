@@ -124,7 +124,7 @@ export type Asset = {
   Type: string;
 };
 
-export const createColumns = (t: any): ColumnDef<Asset>[] => [
+export const createColumns = (t: any): ColumnDef<Asset, unknown>[] => [
   {
     accessorKey: "Asset ID",
     header: t.dataBridge.table.headers.assetId,
@@ -291,11 +291,16 @@ interface DataTableProps<TData, TValue> {
   isLoading?: boolean;
 }
 
-export function DataTable<TData, TValue>({
+export function DataTable({
   columns,
   data,
   isLoading = false,
-}: DataTableProps<TData, TValue>) {
+  searchValue: controlledSearch,
+  onSearchChange,
+}: DataTableProps<Asset, unknown> & {
+  searchValue?: string;
+  onSearchChange?: (value: string) => void;
+}) {
   const { user } = useUser();
   const permissions = (user?.publicMetadata.permissions as string[]) || [];
   const hasSearchPermission = permissions.includes("assets:search");
@@ -333,9 +338,9 @@ export function DataTable<TData, TValue>({
   const isOnlyAssetNameVisible =
     visibleColumnIds.length === 1 && visibleColumnIds.includes("Asset Name");
 
-  const dynamicColumns = React.useMemo(() => {
+  const dynamicColumns = React.useMemo<ColumnDef<Asset, unknown>[]>(() => {
     return createColumns(t).map((column) => {
-      if (column.accessorKey === "Asset ID") {
+      if ((column as any).accessorKey === "Asset ID") {
         return {
           ...column,
           cell: ({ row }: any) => (
@@ -348,7 +353,7 @@ export function DataTable<TData, TValue>({
           ),
         };
       }
-      if (column.accessorKey === "Asset Name") {
+      if ((column as any).accessorKey === "Asset Name") {
         return {
           ...column,
           cell: ({ row }: any) => (
@@ -365,22 +370,17 @@ export function DataTable<TData, TValue>({
     });
   }, [t, isOnlyAssetIdVisible, isOnlyAssetNameVisible]);
 
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const searchValue = searchParams.get("search") ?? "";
+  const [uncontrolledSearch, setUncontrolledSearch] = React.useState("");
+  const searchValue = controlledSearch ?? uncontrolledSearch;
   const setSearchValue = (value: string) => {
-    const params = new URLSearchParams(searchParams.toString());
-    if (value) {
-      params.set("search", value);
+    if (onSearchChange) {
+      onSearchChange(value);
     } else {
-      params.delete("search");
+      setUncontrolledSearch(value);
     }
-    const query = params.toString();
-    router.replace(query ? `${pathname}?${query}` : pathname);
   };
 
-  const tableInstance = useReactTable({
+  const tableInstance = useReactTable<Asset>({
     data,
     columns: dynamicColumns,
     onSortingChange: setSorting,
