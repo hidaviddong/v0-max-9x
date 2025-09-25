@@ -44,6 +44,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/language-context";
+import { useUser } from "@clerk/nextjs";
 
 interface TruncatedTextProps {
   text: string;
@@ -295,6 +296,10 @@ export function DataTable<TData, TValue>({
   data,
   isLoading = false,
 }: DataTableProps<TData, TValue>) {
+  const { user } = useUser();
+  const permissions = (user?.publicMetadata.permissions as string[]) || [];
+  const hasSearchPermission = permissions.includes("assets:search");
+
   const { t } = useLanguage();
 
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -384,14 +389,17 @@ export function DataTable<TData, TValue>({
   return (
     <div className="w-full">
       <div className="flex items-center py-4">
-        <div className="relative max-w-sm">
-          <Input
-            placeholder={t.dataBridge.table.actions.filterAssets}
-            value={searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
-            className="pr-10 selection:bg-blue-500 selection:text-white dark:selection:bg-blue-400 dark:selection:text-gray-900"
-          />
-        </div>
+        {hasSearchPermission && (
+          <div className="relative max-w-sm">
+            <Input
+              placeholder={t.dataBridge.table.actions.filterAssets}
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              className="pr-10 selection:bg-blue-500 selection:text-white dark:selection:bg-blue-400 dark:selection:text-gray-900"
+            />
+          </div>
+        )}
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto bg-transparent">

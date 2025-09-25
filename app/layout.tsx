@@ -9,6 +9,8 @@ import { NuqsAdapter } from "nuqs/adapters/next/app";
 import QueryProvider from "@/components/query-provider";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
+import { Suspense } from "react";
+import Skeleton from "@/components/ui/skeleton";
 
 export const metadata: Metadata = {
   title: "Vobile MAX - Making Creative More Valuable",
@@ -29,10 +31,26 @@ export default function RootLayout({
         >
           <QueryProvider>
             <NuqsAdapter>
-              <LanguageProvider>
-                {children}
-                <Toaster richColors />
-              </LanguageProvider>
+              <Suspense
+                fallback={
+                  <div className="p-6 space-y-4">
+                    <div className="space-y-2">
+                      <Skeleton className="h-6 w-40" />
+                      <Skeleton className="h-4 w-64" />
+                    </div>
+                    <div className="space-y-2">
+                      <Skeleton className="h-10 w-full" />
+                      <Skeleton className="h-10 w-full" />
+                      <Skeleton className="h-10 w-full" />
+                    </div>
+                  </div>
+                }
+              >
+                <LanguageProvider>
+                  {children}
+                  <Toaster richColors />
+                </LanguageProvider>
+              </Suspense>
             </NuqsAdapter>
           </QueryProvider>
           <Analytics />
