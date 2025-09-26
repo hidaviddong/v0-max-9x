@@ -9,7 +9,7 @@ importers:
   .:
     dependencies:
       '@clerk/localizations':
-        specifier: ^3.25.3
+        specifier: latest
         version: 3.25.3
       '@clerk/nextjs':
         specifier: latest
