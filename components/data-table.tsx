@@ -295,10 +295,8 @@ export function DataTable({
   columns,
   data,
   isLoading = false,
-  searchValue: controlledSearch,
   onSearchChange,
 }: DataTableProps<Asset, unknown> & {
-  searchValue?: string;
   onSearchChange?: (value: string) => void;
 }) {
   const { user } = useUser();
@@ -370,13 +368,9 @@ export function DataTable({
     });
   }, [t, isOnlyAssetIdVisible, isOnlyAssetNameVisible]);
 
-  const [uncontrolledSearch, setUncontrolledSearch] = React.useState("");
-  const searchValue = controlledSearch ?? uncontrolledSearch;
   const setSearchValue = (value: string) => {
     if (onSearchChange) {
       onSearchChange(value);
-    } else {
-      setUncontrolledSearch(value);
     }
   };
 
@@ -404,7 +398,6 @@ export function DataTable({
           <div className="relative max-w-sm">
             <Input
               placeholder={t.dataBridge.table.actions.filterAssets}
-              value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
               className="pr-10 selection:bg-blue-500 selection:text-white dark:selection:bg-blue-400 dark:selection:text-gray-900"
             />

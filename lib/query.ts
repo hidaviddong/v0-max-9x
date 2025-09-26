@@ -1,18 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { type Asset } from "@/components/data-table";
-import { useDebouncedValue } from "foxact/use-debounced-value";
 import { useSession } from "@clerk/nextjs";
 import { toast } from "sonner";
 
 export const KEYS = {
   ASSETS: "assets",
 };
-
-const BASE_URL_PROD = "https://maxapi.daviddong.me";
-const BASE_URL_DEV = "http://localhost:8000";
-
-const isDev = process.env.NODE_ENV === "development";
-const BASE_URL = isDev ? BASE_URL_DEV : BASE_URL_PROD;
 
 function transformApiData(apiData: any): Asset[] {
   return apiData.map((item: any) => ({
@@ -28,31 +21,31 @@ function transformApiData(apiData: any): Asset[] {
   }));
 }
 
-export function useAssets(searchQuery: string = "") {
-  const searchDebouncedValue = useDebouncedValue(searchQuery, 300, false);
+export function useAssets(search: string) {
   const { session } = useSession();
   const assetsQuery = useQuery({
-    queryKey: [KEYS.ASSETS, searchDebouncedValue || "all", session?.id],
+    queryKey: ["assets", search || "all", session?.id],
     queryFn: async () => {
-      const url = searchDebouncedValue
-        ? `${BASE_URL}/search_assets?q=${searchDebouncedValue}`
-        : `${BASE_URL}/all_assets`;
-
+      const url = search
+        ? `${
+            process.env.NEXT_PUBLIC_FASTAPI_URL
+          }/search_assets?q=${encodeURIComponent(search)}`
+        : `${process.env.NEXT_PUBLIC_FASTAPI_URL}/all_assets`;
       const token = await session?.getToken();
       const response = await fetch(url, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: token
+          ? {
+              Authorization: `Bearer ${token}`,
+            }
+          : undefined,
       });
       const data = await response.json();
       if (!response.ok) {
-        toast.error(data.detail);
+        toast.error(data?.detail || "Request failed");
       }
       return data;
     },
-    select(data) {
-      return transformApiData(data);
-    },
+    select: (data) => transformApiData(data),
     enabled: !!session,
   });
   return assetsQuery;
