@@ -10,6 +10,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { Suspense } from "react";
 import Skeleton from "@/components/ui/skeleton";
+import { PostHogProvider } from "@/components/posthog-provider";
 
 export const metadata: Metadata = {
   title: "Vobile MAX - Making Creative More Valuable",
@@ -29,27 +30,29 @@ export default function RootLayout({
           <body
             className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}
           >
-            <QueryProvider>
-              <Suspense
-                fallback={
-                  <div className="p-6 space-y-4">
-                    <div className="space-y-2">
-                      <Skeleton className="h-6 w-40" />
-                      <Skeleton className="h-4 w-64" />
+            <PostHogProvider>
+              <QueryProvider>
+                <Suspense
+                  fallback={
+                    <div className="p-6 space-y-4">
+                      <div className="space-y-2">
+                        <Skeleton className="h-6 w-40" />
+                        <Skeleton className="h-4 w-64" />
+                      </div>
+                      <div className="space-y-2">
+                        <Skeleton className="h-10 w-full" />
+                        <Skeleton className="h-10 w-full" />
+                        <Skeleton className="h-10 w-full" />
+                      </div>
                     </div>
-                    <div className="space-y-2">
-                      <Skeleton className="h-10 w-full" />
-                      <Skeleton className="h-10 w-full" />
-                      <Skeleton className="h-10 w-full" />
-                    </div>
-                  </div>
-                }
-              >
-                {children}
-                <Toaster richColors />
-              </Suspense>
-            </QueryProvider>
-            <Analytics />
+                  }
+                >
+                  {children}
+                  <Toaster richColors />
+                </Suspense>
+              </QueryProvider>
+              <Analytics />
+            </PostHogProvider>
           </body>
         </html>
       </ClerkProvider>
