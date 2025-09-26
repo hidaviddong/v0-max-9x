@@ -4,8 +4,7 @@ import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import { Analytics } from "@vercel/analytics/next";
 import { LanguageProvider } from "@/contexts/language-context";
-import { ClerkProvider } from "@clerk/nextjs";
-
+import ClerkProvider from "@/components/clerk-provider";
 import QueryProvider from "@/components/query-provider";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
@@ -24,36 +23,36 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
-      <html lang="en">
-        <body
-          className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}
-        >
-          <QueryProvider>
-            <Suspense
-              fallback={
-                <div className="p-6 space-y-4">
-                  <div className="space-y-2">
-                    <Skeleton className="h-6 w-40" />
-                    <Skeleton className="h-4 w-64" />
+    <LanguageProvider>
+      <ClerkProvider>
+        <html lang="en">
+          <body
+            className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}
+          >
+            <QueryProvider>
+              <Suspense
+                fallback={
+                  <div className="p-6 space-y-4">
+                    <div className="space-y-2">
+                      <Skeleton className="h-6 w-40" />
+                      <Skeleton className="h-4 w-64" />
+                    </div>
+                    <div className="space-y-2">
+                      <Skeleton className="h-10 w-full" />
+                      <Skeleton className="h-10 w-full" />
+                      <Skeleton className="h-10 w-full" />
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    <Skeleton className="h-10 w-full" />
-                    <Skeleton className="h-10 w-full" />
-                    <Skeleton className="h-10 w-full" />
-                  </div>
-                </div>
-              }
-            >
-              <LanguageProvider>
+                }
+              >
                 {children}
                 <Toaster richColors />
-              </LanguageProvider>
-            </Suspense>
-          </QueryProvider>
-          <Analytics />
-        </body>
-      </html>
-    </ClerkProvider>
+              </Suspense>
+            </QueryProvider>
+            <Analytics />
+          </body>
+        </html>
+      </ClerkProvider>
+    </LanguageProvider>
   );
 }
