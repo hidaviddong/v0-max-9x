@@ -5,14 +5,7 @@ import { Button } from "@/components/ui/button";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { useLanguage } from "@/contexts/language-context";
 import { MARKET_PLACE_URL } from "@/lib/constants";
-import {
-  SignedIn,
-  SignedOut,
-  useClerk,
-  UserButton,
-  useUser,
-} from "@clerk/nextjs";
-import { SignOutButton } from "@/components/auth/sign-out-button";
+import { SignedIn, SignedOut, useClerk, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 import Image from "next/image";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -21,7 +14,6 @@ import { Menu } from "lucide-react";
 export function Header() {
   const { openSignIn } = useClerk();
   const { t } = useLanguage();
-  const { isSignedIn, user } = useUser();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const closeMobileMenu = () => {
